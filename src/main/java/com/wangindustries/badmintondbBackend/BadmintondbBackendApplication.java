@@ -1,4 +1,4 @@
-package com.wangindustries.badmintondb_backend;
+package com.wangindustries.badmintondbBackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
