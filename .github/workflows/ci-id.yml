@@ -26,4 +26,4 @@ jobs:
 #          aws lambda create-function --function-name HandlerString --runtime java17 --handler integration.ninjas.HandlerString::handleRequest --role arn:aws:iam::763857617563:role/lambda-ex --zip-file fileb://target/lambda-basic-1.0-SNAPSHOT.jar
 #        continue-on-error: true
       - name: Update Lambda Function
-        run: aws lambda update-function-code --function-name <functionNameGoesHere> --zip-file fileb://target/lambda-basic-1.0-SNAPSHOT.jar
+        run: aws lambda update-function-code --function-name badmintonStats-v4-java --zip-file fileb://target/lambda-basic-1.0-SNAPSHOT.jar

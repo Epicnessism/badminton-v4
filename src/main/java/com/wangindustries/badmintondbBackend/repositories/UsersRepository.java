@@ -22,6 +22,6 @@ public class UsersRepository {
     }
 
     public User getUser(final UUID userId) {
-        userTable.getItem(Key.builder().partitionValue(User.createPk(userId)).build());
+        return userTable.getItem(Key.builder().partitionValue(User.createPk(userId)).build());
     }
 }

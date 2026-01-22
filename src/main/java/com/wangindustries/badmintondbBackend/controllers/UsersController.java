@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/user")
 public class UsersController {
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 //
@@ -24,15 +25,15 @@ public class UsersController {
 //    @Autowired
 //    RacketService racketService;
 
-//    @GetMapping("/user/stringers")
-//    public ResponseEntity<List<UserDetails>> getStringers() {
-//        return new ResponseEntity<>(usersService.getAllStringers(), HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<String> getUsers() {
+        return new ResponseEntity<>("Test Got ALL users", HttpStatus.OK);
+    }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<GetUserResponse> getUser(@PathVariable UUID userId) {
-        GetUserResponse userResponse = new GetUserResponse(userId);
         logger.info("Got to get user request for userId: {}", userId);
+        GetUserResponse userResponse = new GetUserResponse(userId);
         return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
     }
 //
