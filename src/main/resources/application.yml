@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: badmintondb-backend
+  profiles:
+    active: dev
+
+dynamodb:
+  local:
+    enabled: false

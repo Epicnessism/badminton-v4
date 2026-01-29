@@ -18,10 +18,14 @@ public class UsersRepository {
     DynamoDbTable<User> userTable;
 
     public UsersRepository(DynamoDbEnhancedClient enhancedClient) {
-        userTable = enhancedClient.table("bst_db", TableSchema.fromClass(User.class));
+        userTable = enhancedClient.table("badmintonDb", TableSchema.fromClass(User.class));
     }
 
     public User getUser(final UUID userId) {
         return userTable.getItem(Key.builder().partitionValue(User.createPk(userId)).build());
+    }
+
+    public void saveUser(final User user) {
+        userTable.putItem(user);
     }
 }

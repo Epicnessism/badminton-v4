@@ -1,9 +1,11 @@
 package com.wangindustries.badmintondbBackend.controllers;
 
+import com.wangindustries.badmintondbBackend.models.User;
+import com.wangindustries.badmintondbBackend.requests.CreateUserRequest;
 import com.wangindustries.badmintondbBackend.responses.GetUserResponse;
+import jakarta.validation.Valid;
 import com.wangindustries.badmintondbBackend.services.UsersService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UsersController {
-    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 //
 //    @Autowired
 //    StringingService stringingService;
@@ -32,11 +34,22 @@ public class UsersController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<GetUserResponse> getUser(@PathVariable UUID userId) {
-        logger.info("Got to get user request for userId: {}", userId);
+        log.info("Got to get user request for userId: {}", userId);
         GetUserResponse userResponse = new GetUserResponse(userId);
         return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
     }
 //
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        log.info("Received create user request: {}", createUserRequest);
+        try {
+            User createdUser = usersService.createUser(createUserRequest);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Failed to create user", e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //todo should either log and handle or throw, not both
+        }
+    }
 //    @PutMapping("/user/{userId}")
 //    public ResponseEntity<BaseUserResponse> updateUserInformation(
 //            @PathVariable(value="userId") UUID userId,
