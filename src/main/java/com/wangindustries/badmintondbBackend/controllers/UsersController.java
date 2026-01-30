@@ -17,15 +17,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 public class UsersController {
-//
-//    @Autowired
-//    StringingService stringingService;
-
     @Autowired
     UsersService usersService;
-//
-//    @Autowired
-//    RacketService racketService;
 
     @GetMapping
     public ResponseEntity<String> getUsers() {
