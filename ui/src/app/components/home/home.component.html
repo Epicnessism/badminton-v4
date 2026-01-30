@@ -1,0 +1,52 @@
+<div class="card">
+  <div class="header">
+    <div>
+      <h1>🏸 Welcome, {{ currentUser?.givenName }}!</h1>
+      <p class="subtitle">Your stringing jobs</p>
+    </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <span class="loading"></span>
+    <p>Loading your stringings...</p>
+  </div>
+
+  <div class="error-card" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && !errorMessage && stringings.length === 0">
+    <div class="empty-icon">🏸</div>
+    <h3>No Stringings Yet</h3>
+    <p>You don't have any stringing jobs associated with your account yet.</p>
+  </div>
+
+  <div class="stringing-list" *ngIf="!isLoading && stringings.length > 0">
+    <div class="stringing-card" *ngFor="let stringing of stringings">
+      <div class="stringing-header">
+        <div class="racket-info">
+          <strong>{{ stringing.racketBrand }} {{ stringing.racketModel }}</strong>
+          <span class="owner-name">{{ stringing.racketOwnerName }}</span>
+        </div>
+        <span class="state-badge" [ngClass]="getStateClass(stringing.stringingState)">
+          {{ getStateDisplayName(stringing.stringingState) }}
+        </span>
+      </div>
+      <div class="stringing-details">
+        <div class="detail">
+          <span class="label">String:</span>
+          <span class="value">{{ stringing.stringName }}</span>
+        </div>
+        <div class="detail">
+          <span class="label">Tension:</span>
+          <span class="value">{{ stringing.stringTensionMains }} / {{ stringing.stringTensionCrosses }} lbs</span>
+        </div>
+        <div class="detail">
+          <span class="label">Requested:</span>
+          <span class="value">{{ stringing.requestedAt | date:'short' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

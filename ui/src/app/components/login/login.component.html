@@ -1,0 +1,183 @@
+<div class="card">
+  <h1>🏸 Badminton Tracker</h1>
+  <p class="subtitle">Track your racket stringings</p>
+
+  <div class="tabs">
+    <button
+      class="tab"
+      [class.active]="activeTab === 'login'"
+      (click)="setActiveTab('login')"
+    >
+      Login
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'register'"
+      (click)="setActiveTab('register')"
+    >
+      Register
+    </button>
+  </div>
+
+  <!-- Login Form -->
+  <form *ngIf="activeTab === 'login'" (ngSubmit)="onLogin()">
+    <div class="form-group">
+      <label for="loginUsername">Username</label>
+      <input
+        type="text"
+        id="loginUsername"
+        [(ngModel)]="loginData.username"
+        name="username"
+        placeholder="Enter your username"
+        [class.invalid]="submitted && !loginData.username"
+      />
+      <div class="error-message" *ngIf="submitted && !loginData.username">
+        Username is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="loginPassword">Password</label>
+      <input
+        type="password"
+        id="loginPassword"
+        [(ngModel)]="loginData.password"
+        name="password"
+        placeholder="Enter your password"
+        [class.invalid]="submitted && !loginData.password"
+      />
+      <div class="error-message" *ngIf="submitted && !loginData.password">
+        Password is required
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="isLoading" class="loading"></span>
+      {{ isLoading ? 'Logging in...' : 'Login' }}
+    </button>
+  </form>
+
+  <!-- Register Form -->
+  <form *ngIf="activeTab === 'register'" (ngSubmit)="onRegister()">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="givenName">First Name</label>
+        <input
+          type="text"
+          id="givenName"
+          [(ngModel)]="registerData.givenName"
+          name="givenName"
+          placeholder="John"
+          [class.invalid]="submitted && !registerData.givenName"
+        />
+        <div class="error-message" *ngIf="submitted && !registerData.givenName">
+          First name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="familyName">Last Name</label>
+        <input
+          type="text"
+          id="familyName"
+          [(ngModel)]="registerData.familyName"
+          name="familyName"
+          placeholder="Doe"
+          [class.invalid]="submitted && !registerData.familyName"
+        />
+        <div class="error-message" *ngIf="submitted && !registerData.familyName">
+          Last name is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="registerData.email"
+        name="email"
+        placeholder="john.doe@example.com"
+        [class.invalid]="submitted && (!registerData.email || !isValidEmail(registerData.email))"
+      />
+      <div class="error-message" *ngIf="submitted && !registerData.email">
+        Email is required
+      </div>
+      <div class="error-message" *ngIf="submitted && registerData.email && !isValidEmail(registerData.email)">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="registerData.username"
+        name="username"
+        placeholder="johndoe123"
+        [class.invalid]="submitted && !registerData.username"
+      />
+      <div class="error-message" *ngIf="submitted && !registerData.username">
+        Username is required
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input
+          type="number"
+          id="age"
+          [(ngModel)]="registerData.age"
+          name="age"
+          min="0"
+          placeholder="25"
+          [class.invalid]="submitted && registerData.age < 0"
+        />
+        <div class="error-message" *ngIf="submitted && registerData.age < 0">
+          Age must be 0 or greater
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthday">Birthday</label>
+        <input
+          type="date"
+          id="birthday"
+          [(ngModel)]="registerData.birthday"
+          name="birthday"
+          [class.invalid]="submitted && !registerData.birthday"
+        />
+        <div class="error-message" *ngIf="submitted && !registerData.birthday">
+          Birthday is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="registerData.password"
+        name="password"
+        placeholder="••••••••"
+        [class.invalid]="submitted && !registerData.password"
+      />
+      <div class="error-message" *ngIf="submitted && !registerData.password">
+        Password is required
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="isLoading" class="loading"></span>
+      {{ isLoading ? 'Creating account...' : 'Create Account' }}
+    </button>
+  </form>
+
+  <div class="error-card" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </div>
+</div>

@@ -13,6 +13,10 @@ dynamodb:
 aws:
   region: us-east-2
 
+jwt:
+  secret: badminton-dev-local-secret-key-that-is-at-least-256-bits-long
+  expiration: 86400000
+
 logging:
   level:
     com.wangindustries: DEBUG

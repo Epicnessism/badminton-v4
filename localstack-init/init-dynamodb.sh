@@ -9,6 +9,7 @@ awslocal dynamodb create-table \
         AttributeName=SK,AttributeType=S \
         AttributeName=gsiPk,AttributeType=S \
         AttributeName=gsiSk,AttributeType=S \
+        AttributeName=usernameGsiPk,AttributeType=S \
     --key-schema \
         AttributeName=PK,KeyType=HASH \
         AttributeName=SK,KeyType=RANGE \
@@ -19,6 +20,14 @@ awslocal dynamodb create-table \
                 "KeySchema": [
                     {"AttributeName": "gsiPk", "KeyType": "HASH"},
                     {"AttributeName": "gsiSk", "KeyType": "RANGE"}
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+                "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
+            },
+            {
+                "IndexName": "username-index",
+                "KeySchema": [
+                    {"AttributeName": "usernameGsiPk", "KeyType": "HASH"}
                 ],
                 "Projection": {"ProjectionType": "ALL"},
                 "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}

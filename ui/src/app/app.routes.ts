@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
-import { CreateUserComponent } from './components/create-user/create-user.component';
+import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/home/home.component';
+import { authGuard, loginGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: CreateUserComponent },
-  { path: '**', redirectTo: '' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: '/home' }
 ];

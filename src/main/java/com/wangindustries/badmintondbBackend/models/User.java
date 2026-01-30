@@ -12,11 +12,13 @@ public class User {
     public static final String PK_SYNTAX = "USER#%s";
     public static final String SK_SYNTAX = "PROFILE";
     public static final String NAME_GSI = "name-index";
+    public static final String USERNAME_GSI = "username-index";
     public static final String GSI_PK_SYNTAX = "NAME#%s";
     private String PK;
     private String SK;
     private String gsiPk;
     private String gsiSk;
+    private String usernameGsiPk;
 
     @DynamoDbPartitionKey
     public String getPK() {
@@ -101,6 +103,15 @@ public class User {
         this.email = email;
     }
 
+    @DynamoDbSecondaryPartitionKey(indexNames = {USERNAME_GSI})
+    public String getUsernameGsiPk() {
+        return usernameGsiPk;
+    }
+
+    public void setUsernameGsiPk(String usernameGsiPk) {
+        this.usernameGsiPk = usernameGsiPk;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -152,6 +163,10 @@ public class User {
 
     public static String createGsiSk(final String familyName) {
         return familyName.toUpperCase();
+    }
+
+    public static String createUsernameGsiPk(final String username) {
+        return "USERNAME#" + username.toLowerCase();
     }
 
     @Override

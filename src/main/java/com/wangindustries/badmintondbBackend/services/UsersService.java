@@ -29,6 +29,12 @@ public class UsersService {
     public User createUser(CreateUserRequest request) {
         logger.info("Creating user with request: {}", request);
 
+        User existingUser = usersRepository.findByUsername(request.getUsername());
+        if (existingUser != null) {
+            logger.warn("Username already exists: {}", request.getUsername());
+            throw new IllegalArgumentException("Username '" + request.getUsername() + "' is already taken");
+        }
+
         UUID userId = UUID.randomUUID();
         String encryptedPassword = passwordEncryptionService.encryptPassword(request.getPassword());
 
@@ -37,6 +43,7 @@ public class UsersService {
         user.setSK(User.createSk());
         user.setGsiPk(User.createGsiPk(request.getGivenName()));
         user.setGsiSk(User.createGsiSk(request.getFamilyName()));
+        user.setUsernameGsiPk(User.createUsernameGsiPk(request.getUsername()));
         user.setUserId(userId);
         user.setGivenName(request.getGivenName());
         user.setFamilyName(request.getFamilyName());
@@ -51,5 +58,9 @@ public class UsersService {
         logger.info("Successfully created user: {}", user);
 
         return user;
+    }
+
+    public User findByUsername(String username) {
+        return usersRepository.findByUsername(username);
     }
 }
