@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Angular ###
+ui/node_modules/
+ui/dist/
+ui/.angular/
+ui/.sass-cache/
+ui/connect.lock
+ui/coverage/
+ui/libpeerconnection.log
+ui/testem.log
+ui/typings/
+*.ngsummary.json
+*.tsbuildinfo

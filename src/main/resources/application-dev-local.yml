@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: badmintondb-backend
+
+server:
+  port: 8080
+
+dynamodb:
+  local:
+    enabled: true
+    endpoint: http://localhost:4566
+
+aws:
+  region: us-east-2
+
+logging:
+  level:
+    com.wangindustries: DEBUG
+    software.amazon.awssdk: INFO

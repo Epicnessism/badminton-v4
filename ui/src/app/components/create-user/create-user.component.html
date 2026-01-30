@@ -1,0 +1,159 @@
+<div class="card">
+  <h1>🏸 Badminton Tracker</h1>
+  <p class="subtitle">Create a new user account</p>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="givenName">First Name</label>
+        <input
+          type="text"
+          id="givenName"
+          [(ngModel)]="formData.givenName"
+          name="givenName"
+          placeholder="John"
+          [class.invalid]="submitted && !formData.givenName"
+        />
+        <div class="error-message" *ngIf="submitted && !formData.givenName">
+          First name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="familyName">Last Name</label>
+        <input
+          type="text"
+          id="familyName"
+          [(ngModel)]="formData.familyName"
+          name="familyName"
+          placeholder="Doe"
+          [class.invalid]="submitted && !formData.familyName"
+        />
+        <div class="error-message" *ngIf="submitted && !formData.familyName">
+          Last name is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="formData.email"
+        name="email"
+        placeholder="john.doe@example.com"
+        [class.invalid]="submitted && (!formData.email || !isValidEmail(formData.email))"
+      />
+      <div class="error-message" *ngIf="submitted && !formData.email">
+        Email is required
+      </div>
+      <div class="error-message" *ngIf="submitted && formData.email && !isValidEmail(formData.email)">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="formData.username"
+        name="username"
+        placeholder="johndoe123"
+        [class.invalid]="submitted && !formData.username"
+      />
+      <div class="error-message" *ngIf="submitted && !formData.username">
+        Username is required
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input
+          type="number"
+          id="age"
+          [(ngModel)]="formData.age"
+          name="age"
+          min="0"
+          placeholder="25"
+          [class.invalid]="submitted && formData.age < 0"
+        />
+        <div class="error-message" *ngIf="submitted && formData.age < 0">
+          Age must be 0 or greater
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthday">Birthday</label>
+        <input
+          type="date"
+          id="birthday"
+          [(ngModel)]="formData.birthday"
+          name="birthday"
+          [class.invalid]="submitted && !formData.birthday"
+        />
+        <div class="error-message" *ngIf="submitted && !formData.birthday">
+          Birthday is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="formData.password"
+        name="password"
+        placeholder="••••••••"
+        [class.invalid]="submitted && !formData.password"
+      />
+      <div class="error-message" *ngIf="submitted && !formData.password">
+        Password is required
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="isLoading" class="loading"></span>
+      {{ isLoading ? 'Creating...' : 'Create User' }}
+    </button>
+  </form>
+
+  <div class="success-card" *ngIf="createdUser">
+    <h3>✅ User Created Successfully!</h3>
+    <div class="user-detail">
+      <span class="label">User ID</span>
+      <span class="value">{{ createdUser.userId }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Name</span>
+      <span class="value">{{ createdUser.givenName }} {{ createdUser.familyName }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Email</span>
+      <span class="value">{{ createdUser.email }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Username</span>
+      <span class="value">{{ createdUser.username }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Age</span>
+      <span class="value">{{ createdUser.age }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Birthday</span>
+      <span class="value">{{ createdUser.birthday }}</span>
+    </div>
+    <div class="user-detail">
+      <span class="label">Created At</span>
+      <span class="value">{{ createdUser.createdAt }}</span>
+    </div>
+  </div>
+
+  <div class="error-card" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </div>
+</div>
