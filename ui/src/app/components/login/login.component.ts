@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { LoginRequest } from '../../models/auth.model';
@@ -10,7 +11,7 @@ import { CreateUserRequest } from '../../models/user.model';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatCheckboxModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -26,9 +27,9 @@ export class LoginComponent {
     familyName: '',
     email: '',
     username: '',
-    age: 0,
     birthday: '',
-    password: ''
+    password: '',
+    isStringer: false
   };
 
   errorMessage: string | null = null;
@@ -112,7 +113,6 @@ export class LoginComponent {
       this.registerData.email &&
       this.isValidEmail(this.registerData.email) &&
       this.registerData.username &&
-      this.registerData.age >= 0 &&
       this.registerData.birthday &&
       this.registerData.password
     );

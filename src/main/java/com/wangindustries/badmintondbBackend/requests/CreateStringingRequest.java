@@ -14,8 +14,6 @@ public class CreateStringingRequest {
 
     private UUID ownerUserId;
 
-    private String ownerName;
-
     @NotBlank(message = "Racket make is required")
     private String racketMake;
 
@@ -23,6 +21,8 @@ public class CreateStringingRequest {
     private String racketModel;
 
     private String stringType;
+
+    private String stringColor;
 
     @NotNull(message = "Mains tension is required")
     @Positive(message = "Mains tension must be a positive number")

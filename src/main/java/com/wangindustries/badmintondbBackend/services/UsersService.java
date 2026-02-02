@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -49,10 +50,10 @@ public class UsersService {
         user.setFamilyName(request.getFamilyName());
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
-        user.setAge(request.getAge());
         user.setBirthday(request.getBirthday());
         user.setEncryptedPassword(encryptedPassword);
         user.setCreatedAt(Instant.now());
+        user.setIsStringer(request.getIsStringer() != null ? request.getIsStringer() : false);
 
         usersRepository.saveUser(user);
         logger.info("Successfully created user: {}", user);
@@ -62,5 +63,13 @@ public class UsersService {
 
     public User findByUsername(String username) {
         return usersRepository.findByUsername(username);
+    }
+
+    public List<User> listUsers() {
+        return usersRepository.listUsers();
+    }
+
+    public List<User> listStringers() {
+        return usersRepository.listStringers();
     }
 }

@@ -73,10 +73,10 @@ public class StringingService {
         stringing.setStringingId(stringingId);
         stringing.setStringerUserId(request.getStringerUserId());
         stringing.setOwnerUserId(request.getOwnerUserId());
-        stringing.setOwnerName(request.getOwnerName());
         stringing.setRacketMake(request.getRacketMake());
         stringing.setRacketModel(request.getRacketModel());
         stringing.setStringType(request.getStringType());
+        stringing.setStringColor(request.getStringColor());
         stringing.setMainsTensionLbs(request.getMainsTensionLbs());
         stringing.setCrossesTensionLbs(request.getCrossesTensionLbs());
         stringing.setState(StringingState.REQUESTED_BUT_NOT_DELIVERED);
@@ -178,10 +178,6 @@ public class StringingService {
             existing.setOwnerUserId(request.getOwnerUserId());
         }
 
-        if (request.getOwnerName() != null) {
-            existing.setOwnerName(request.getOwnerName());
-        }
-
         if (request.getRacketMake() != null) {
             existing.setRacketMake(request.getRacketMake());
         }
@@ -192,6 +188,10 @@ public class StringingService {
 
         if (request.getStringType() != null) {
             existing.setStringType(request.getStringType());
+        }
+
+        if (request.getStringColor() != null) {
+            existing.setStringColor(request.getStringColor());
         }
 
         if (request.getMainsTensionLbs() != null) {

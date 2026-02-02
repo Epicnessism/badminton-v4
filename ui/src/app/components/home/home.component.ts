@@ -63,11 +63,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
   getStateDisplayName(state: string): string {
     const stateMap: { [key: string]: string } = {
       'REQUESTED_BUT_NOT_DELIVERED': 'Requested',

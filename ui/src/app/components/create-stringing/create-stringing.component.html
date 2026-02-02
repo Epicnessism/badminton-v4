@@ -1,0 +1,163 @@
+<div class="page-container">
+  <div class="card">
+    <div class="header">
+      <div>
+        <h1>Create Stringing</h1>
+        <p class="subtitle">Enter the details for a new stringing job</p>
+      </div>
+      <button class="back-btn" type="button" (click)="cancel()">Back</button>
+    </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <span class="loading"></span>
+    <p>Loading...</p>
+  </div>
+
+  <div class="error-card" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <form *ngIf="!isLoading" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Owner</label>
+      <div class="owner-selection">
+        <button
+          *ngIf="ownerSelectMode === 'ME'"
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="enableOwnerSearch()"
+        >
+          {{ getOwnerDisplayName() }} (Me) - Click to change
+        </button>
+
+        <div *ngIf="ownerSelectMode === 'SEARCH'" class="owner-search-container">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select owner</mat-label>
+            <mat-select
+              [(ngModel)]="formData.ownerUserId"
+              name="ownerUserId"
+              (selectionChange)="onOwnerChanged()"
+            >
+              <mat-option *ngFor="let user of users" [value]="user.userId">
+                {{ user.givenName }} {{ user.familyName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="error-message" *ngIf="submitted && !formData.ownerUserId">
+        Owner is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Stringer</mat-label>
+        <mat-select
+          [(ngModel)]="formData.stringerUserId"
+          name="stringerUserId"
+        >
+          <mat-option *ngFor="let user of stringers" [value]="user.userId">
+            {{ user.givenName }} {{ user.familyName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="error-message" *ngIf="submitted && !formData.stringerUserId">
+        Stringer is required
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="racketMake">Racket Make</label>
+        <input
+          type="text"
+          id="racketMake"
+          name="racketMake"
+          [(ngModel)]="formData.racketMake"
+          placeholder="Yonex"
+          [class.invalid]="submitted && !formData.racketMake"
+        />
+        <div class="error-message" *ngIf="submitted && !formData.racketMake">
+          Racket make is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="racketModel">Racket Model</label>
+        <input
+          type="text"
+          id="racketModel"
+          name="racketModel"
+          [(ngModel)]="formData.racketModel"
+          placeholder="Astrox 88D"
+          [class.invalid]="submitted && !formData.racketModel"
+        />
+        <div class="error-message" *ngIf="submitted && !formData.racketModel">
+          Racket model is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="stringType">String Type</label>
+      <input
+        type="text"
+        id="stringType"
+        name="stringType"
+        [(ngModel)]="formData.stringType"
+        placeholder="BG80"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="stringColor">String Color</label>
+      <input
+        type="text"
+        id="stringColor"
+        name="stringColor"
+        [(ngModel)]="formData.stringColor"
+        placeholder="Optional (e.g. White)"
+      />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="mainsTensionLbs">Mains Tension (lbs)</label>
+        <input
+          type="number"
+          id="mainsTensionLbs"
+          name="mainsTensionLbs"
+          [(ngModel)]="formData.mainsTensionLbs"
+          min="1"
+          [class.invalid]="submitted && (!formData.mainsTensionLbs || formData.mainsTensionLbs <= 0)"
+        />
+        <div class="error-message" *ngIf="submitted && (!formData.mainsTensionLbs || formData.mainsTensionLbs <= 0)">
+          Mains tension must be greater than 0
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="crossesTensionLbs">Crosses Tension (lbs)</label>
+        <input
+          type="number"
+          id="crossesTensionLbs"
+          name="crossesTensionLbs"
+          [(ngModel)]="formData.crossesTensionLbs"
+          min="1"
+          [class.invalid]="submitted && (!formData.crossesTensionLbs || formData.crossesTensionLbs <= 0)"
+        />
+        <div class="error-message" *ngIf="submitted && (!formData.crossesTensionLbs || formData.crossesTensionLbs <= 0)">
+          Crosses tension must be greater than 0
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="isLoading" class="loading"></span>
+      {{ isLoading ? 'Creating...' : 'Create Stringing' }}
+    </button>
+  </form>
+  </div>
+</div>

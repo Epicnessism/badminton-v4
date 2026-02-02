@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -21,9 +22,16 @@ public class UsersController {
     UsersService usersService;
 
     @GetMapping
-    public ResponseEntity<String> getUsers() {
-        return new ResponseEntity<>("Test Got ALL users", HttpStatus.OK);
+    public ResponseEntity<List<User>> getUsers() {
+        List<User> users = usersService.listUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+     @GetMapping("/stringers")
+     public ResponseEntity<List<User>> getStringers() {
+         List<User> users = usersService.listStringers();
+         return new ResponseEntity<>(users, HttpStatus.OK);
+     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<GetUserResponse> getUser(@PathVariable UUID userId) {

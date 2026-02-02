@@ -2,20 +2,33 @@ export interface Stringing {
   stringingId: string;
   stringerUserId: string;
   ownerUserId: string;
-  racketOwnerName: string;
-  racketBrand: string;
+  ownerName: string;
+  racketMake: string;
   racketModel: string;
-  stringName: string;
-  stringTensionMains: number;
-  stringTensionCrosses: number;
-  stringingState: StringingState;
+  stringType: string;
+  stringColor?: string;
+  mainsTensionLbs: number;
+  crossesTensionLbs: number;
+  state: StringingState;
+  createdAt: string;
   requestedAt: string;
   receivedAt: string | null;
-  startedAt: string | null;
+  inProgressAt: string | null;
   finishedAt: string | null;
   completedAt: string | null;
   failedAt: string | null;
   failedCompletedAt: string | null;
+}
+
+export interface CreateStringingRequest {
+  stringerUserId: string;
+  ownerUserId: string;
+  racketMake: string;
+  racketModel: string;
+  stringType: string;
+  stringColor?: string;
+  mainsTensionLbs: number | null;
+  crossesTensionLbs: number | null;
 }
 
 export type StringingState =

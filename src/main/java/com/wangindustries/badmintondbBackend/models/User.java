@@ -35,10 +35,10 @@ public class User {
     private String familyName;
     private String email;
     private String username;
-    private Integer age;
     private LocalDate birthday;
     private String encryptedPassword;
     private Instant createdAt;
+    private Boolean isStringer;
 
 
     public static String createPk(final UUID userId) {
@@ -120,14 +120,6 @@ public class User {
         this.username = username;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
     public LocalDate getBirthday() {
         return birthday;
     }
@@ -151,6 +143,14 @@ public class User {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Boolean getIsStringer() {
+        return isStringer;
+    }
+
+    public void setIsStringer(Boolean isStringer) {
+        this.isStringer = isStringer;
     }
 
     public static String createSk() {
@@ -179,7 +179,6 @@ public class User {
                 ", familyName='" + familyName + '\'' +
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
-                ", age=" + age +
                 ", birthday=" + birthday +
                 ", createdAt=" + createdAt +
                 ", encryptedPassword='[PROTECTED]'" +

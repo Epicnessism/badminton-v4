@@ -3,10 +3,14 @@ package com.wangindustries.badmintondbBackend.repositories;
 import com.wangindustries.badmintondbBackend.models.Stringing;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.enhanced.dynamodb.*;
+import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -71,5 +75,26 @@ public class StringingRepository {
                 .partitionValue(Stringing.createPk(stringingId))
                 .sortValue(Stringing.createSkOwner(ownerUserId))
                 .build());
+    }
+
+    public List<UUID> listDistinctStringerUserIds() {
+        Expression filterExpression = Expression.builder()
+                .expression("SK = :sk AND attribute_exists(stringerUserId)")
+                .expressionValues(Map.of(
+                        ":sk", AttributeValue.builder().s(Stringing.createSkDetails()).build()
+                ))
+                .build();
+
+        ScanEnhancedRequest scanRequest = ScanEnhancedRequest.builder()
+                .filterExpression(filterExpression)
+                .build();
+
+        return stringingTable.scan(scanRequest)
+                .stream()
+                .flatMap(page -> page.items().stream())
+                .map(Stringing::getStringerUserId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }

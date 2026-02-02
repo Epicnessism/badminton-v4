@@ -26,6 +26,7 @@ public class Stringing {
     private String racketMake;
     private String racketModel;
     private String stringType;
+    private String stringColor;
     private Double mainsTensionLbs;
     private Double crossesTensionLbs;
     private StringingState state;
@@ -128,6 +129,14 @@ public class Stringing {
 
     public void setStringType(String stringType) {
         this.stringType = stringType;
+    }
+
+    public String getStringColor() {
+        return stringColor;
+    }
+
+    public void setStringColor(String stringColor) {
+        this.stringColor = stringColor;
     }
 
     public Double getMainsTensionLbs() {

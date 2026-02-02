@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UserService } from '../../services/user.service';
 import { CreateUserRequest, User } from '../../models/user.model';
 
 @Component({
   selector: 'app-create-user',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatCheckboxModule],
   templateUrl: './create-user.component.html'
 })
 export class CreateUserComponent {
@@ -16,9 +17,9 @@ export class CreateUserComponent {
     familyName: '',
     email: '',
     username: '',
-    age: 0,
     birthday: '',
-    password: ''
+    password: '',
+    isStringer: false
   };
 
   createdUser: User | null = null;
@@ -60,7 +61,6 @@ export class CreateUserComponent {
       this.formData.email &&
       this.isValidEmail(this.formData.email) &&
       this.formData.username &&
-      this.formData.age >= 0 &&
       this.formData.birthday &&
       this.formData.password
     );
@@ -77,9 +77,9 @@ export class CreateUserComponent {
       familyName: '',
       email: '',
       username: '',
-      age: 0,
       birthday: '',
-      password: ''
+      password: '',
+      isStringer: false
     };
     this.submitted = false;
   }

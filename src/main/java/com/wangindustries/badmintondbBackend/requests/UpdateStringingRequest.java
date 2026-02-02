@@ -17,13 +17,13 @@ public class UpdateStringingRequest {
 
     private UUID ownerUserId;
 
-    private String ownerName;
-
     private String racketMake;
 
     private String racketModel;
 
     private String stringType;
+
+    private String stringColor;
 
     @Positive(message = "Mains tension must be a positive number")
     private Double mainsTensionLbs;

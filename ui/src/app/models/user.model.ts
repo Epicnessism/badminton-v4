@@ -3,9 +3,9 @@ export interface CreateUserRequest {
   familyName: string;
   email: string;
   username: string;
-  age: number;
   birthday: string;
   password: string;
+  isStringer?: boolean;
 }
 
 export interface User {
@@ -14,7 +14,6 @@ export interface User {
   familyName: string;
   email: string;
   username: string;
-  age: number;
   birthday: string;
   createdAt: string;
 }

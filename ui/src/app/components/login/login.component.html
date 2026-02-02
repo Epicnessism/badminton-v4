@@ -1,6 +1,7 @@
-<div class="card">
-  <h1>🏸 Badminton Tracker</h1>
-  <p class="subtitle">Track your racket stringings</p>
+<div class="page-container">
+  <div class="card">
+    <h1>Welcome</h1>
+    <p class="subtitle">Track your racket stringings</p>
 
   <div class="tabs">
     <button
@@ -124,35 +125,17 @@
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="age">Age</label>
-        <input
-          type="number"
-          id="age"
-          [(ngModel)]="registerData.age"
-          name="age"
-          min="0"
-          placeholder="25"
-          [class.invalid]="submitted && registerData.age < 0"
-        />
-        <div class="error-message" *ngIf="submitted && registerData.age < 0">
-          Age must be 0 or greater
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="birthday">Birthday</label>
-        <input
-          type="date"
-          id="birthday"
-          [(ngModel)]="registerData.birthday"
-          name="birthday"
-          [class.invalid]="submitted && !registerData.birthday"
-        />
-        <div class="error-message" *ngIf="submitted && !registerData.birthday">
-          Birthday is required
-        </div>
+    <div class="form-group">
+      <label for="birthday">Birthday</label>
+      <input
+        type="date"
+        id="birthday"
+        [(ngModel)]="registerData.birthday"
+        name="birthday"
+        [class.invalid]="submitted && !registerData.birthday"
+      />
+      <div class="error-message" *ngIf="submitted && !registerData.birthday">
+        Birthday is required
       </div>
     </div>
 
@@ -171,6 +154,12 @@
       </div>
     </div>
 
+    <div class="form-group checkbox-group">
+      <mat-checkbox [(ngModel)]="registerData.isStringer" name="isStringer">
+        I am a stringer (I string rackets for others)
+      </mat-checkbox>
+    </div>
+
     <button type="submit" [disabled]="isLoading">
       <span *ngIf="isLoading" class="loading"></span>
       {{ isLoading ? 'Creating account...' : 'Create Account' }}
@@ -179,5 +168,6 @@
 
   <div class="error-card" *ngIf="errorMessage">
     ❌ {{ errorMessage }}
+  </div>
   </div>
 </div>

@@ -1,11 +1,7 @@
-<div class="card">
-  <div class="header">
-    <div>
-      <h1>🏸 Welcome, {{ currentUser?.givenName }}!</h1>
-      <p class="subtitle">Your stringing jobs</p>
-    </div>
-    <button class="logout-btn" (click)="logout()">Logout</button>
-  </div>
+<div class="page-container">
+  <div class="card">
+    <h1>Your stringing jobs</h1>
+    <p class="subtitle">Welcome back!</p>
 
   <div class="loading-container" *ngIf="isLoading">
     <span class="loading"></span>
@@ -26,21 +22,21 @@
     <div class="stringing-card" *ngFor="let stringing of stringings">
       <div class="stringing-header">
         <div class="racket-info">
-          <strong>{{ stringing.racketBrand }} {{ stringing.racketModel }}</strong>
-          <span class="owner-name">{{ stringing.racketOwnerName }}</span>
+          <strong>{{ stringing.racketMake }} {{ stringing.racketModel }}</strong>
+          <span class="owner-name">{{ stringing.ownerName }}</span>
         </div>
-        <span class="state-badge" [ngClass]="getStateClass(stringing.stringingState)">
-          {{ getStateDisplayName(stringing.stringingState) }}
+        <span class="state-badge" [ngClass]="getStateClass(stringing.state)">
+          {{ getStateDisplayName(stringing.state) }}
         </span>
       </div>
       <div class="stringing-details">
         <div class="detail">
           <span class="label">String:</span>
-          <span class="value">{{ stringing.stringName }}</span>
+          <span class="value">{{ stringing.stringType }}</span>
         </div>
         <div class="detail">
           <span class="label">Tension:</span>
-          <span class="value">{{ stringing.stringTensionMains }} / {{ stringing.stringTensionCrosses }} lbs</span>
+          <span class="value">{{ stringing.mainsTensionLbs }} / {{ stringing.crossesTensionLbs }} lbs</span>
         </div>
         <div class="detail">
           <span class="label">Requested:</span>
@@ -48,5 +44,6 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </div>
