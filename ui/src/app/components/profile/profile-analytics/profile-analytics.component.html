@@ -1,0 +1,193 @@
+<div class="card analytics-card">
+  <div class="analytics-header">
+    <h2>Your Stringing Analytics</h2>
+    <div class="analytics-actions">
+      <span class="analytics-timestamp" *ngIf="analytics">
+        Last updated: {{ formatAnalyticsDate(analytics.computedAt) }}
+      </span>
+      <button mat-icon-button (click)="onRefresh()" [disabled]="isLoading" matTooltip="Refresh Data">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="analytics-loading" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Loading analytics...</span>
+  </div>
+
+  <div class="analytics-error" *ngIf="errorMessage && !isLoading">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+    <button mat-stroked-button (click)="onRetry()">Retry</button>
+  </div>
+
+  <div class="analytics-content" *ngIf="analytics && !isLoading">
+    <!-- Owner Stats -->
+    <div class="analytics-section">
+      <h3>As Racket Owner</h3>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ analytics.totalStringingsAsOwner || 0 }}</div>
+          <div class="stat-label">Total Stringings</div>
+        </div>
+        <div class="stat-card" *ngIf="analytics.mostUsedTensionCombination">
+          <div class="stat-value">{{ analytics.mostUsedTensionCombination }}</div>
+          <div class="stat-label">Favorite Tension ({{ analytics.mostUsedTensionCount }}x)</div>
+        </div>
+      </div>
+
+      <!-- Stringings by State -->
+      <div class="analytics-chart-section" *ngIf="analytics.stringingsByState && (analytics.stringingsByState | keyvalue).length > 0">
+        <h4>Stringings by State</h4>
+        <div class="state-bars">
+          <div class="state-bar-item" *ngFor="let item of getTopItems(analytics.stringingsByState, 10)">
+            <div class="state-bar-label">{{ formatStateName(item.key) }}</div>
+            <div class="state-bar-wrapper">
+              <div class="state-bar" 
+                [style.width.%]="(item.value / analytics.totalStringingsAsOwner) * 100"
+                [style.background-color]="getStateColor(item.key)">
+              </div>
+              <span class="state-bar-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top String Types -->
+      <div class="analytics-list-section" *ngIf="analytics.stringTypeUsage && (analytics.stringTypeUsage | keyvalue).length > 0">
+        <h4>Most Used Strings</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.stringTypeUsage); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} times</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Rackets -->
+      <div class="analytics-list-section" *ngIf="analytics.racketUsage && (analytics.racketUsage | keyvalue).length > 0">
+        <h4>Most Strung Rackets</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.racketUsage); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} times</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Trend -->
+      <div class="analytics-chart-section" *ngIf="analytics.monthlyTrend && analytics.monthlyTrend.length > 0">
+        <h4>Monthly Trend</h4>
+        <div class="monthly-chart">
+          <div class="month-bar-item" *ngFor="let month of analytics.monthlyTrend">
+            <div class="month-bar-wrapper">
+              <div class="month-bar" 
+                [style.height.%]="(month.count / (analytics.totalStringingsAsOwner || 1)) * 100 * 3">
+              </div>
+            </div>
+            <div class="month-label">{{ month.month }}</div>
+            <div class="month-count">{{ month.count }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Stringers -->
+      <div class="analytics-list-section" *ngIf="analytics.topStringers && (analytics.topStringers | keyvalue).length > 0">
+        <h4>Top Stringers</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.topStringers); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} jobs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stringer Stats -->
+    <div class="analytics-section stringer-section" *ngIf="analytics.totalStringingsAsStringer !== null">
+      <h3>As Stringer</h3>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ analytics.totalStringingsAsStringer || 0 }}</div>
+          <div class="stat-label">Total Jobs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ analytics.successRate || 0 }}%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-card" *ngIf="analytics.averageCompletionTimeHours">
+          <div class="stat-value">{{ analytics.averageCompletionTimeHours }} hrs</div>
+          <div class="stat-label">Avg Completion Time</div>
+        </div>
+        <div class="stat-card" *ngIf="analytics.busiestMonth">
+          <div class="stat-value">{{ analytics.busiestMonth }}</div>
+          <div class="stat-label">Busiest Month</div>
+        </div>
+      </div>
+
+      <!-- Top Customers -->
+      <div class="analytics-list-section" *ngIf="analytics.topCustomers && (analytics.topCustomers | keyvalue).length > 0">
+        <h4>Top Customers</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.topCustomers); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} jobs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Most Used Strings (Stringer) -->
+      <div class="analytics-list-section" *ngIf="analytics.stringerStringTypeUsage && (analytics.stringerStringTypeUsage | keyvalue).length > 0">
+        <h4>Most Used Strings</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.stringerStringTypeUsage); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} times</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Most Strung Rackets (Stringer) -->
+      <div class="analytics-list-section" *ngIf="analytics.stringerRacketUsage && (analytics.stringerRacketUsage | keyvalue).length > 0">
+        <h4>Most Strung Rackets</h4>
+        <div class="ranked-list">
+          <div class="ranked-item" *ngFor="let item of getTopItems(analytics.stringerRacketUsage); let i = index">
+            <span class="rank">{{ i + 1 }}</span>
+            <span class="item-name">{{ item.key }}</span>
+            <span class="item-count">{{ item.value }} times</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Trend (Stringer) -->
+      <div class="analytics-chart-section" *ngIf="analytics.stringerMonthlyTrend && analytics.stringerMonthlyTrend.length > 0">
+        <h4>Monthly Trend</h4>
+        <div class="monthly-chart">
+          <div class="month-bar-item" *ngFor="let month of analytics.stringerMonthlyTrend">
+            <div class="month-bar-wrapper">
+              <div class="month-bar stringer-bar" 
+                [style.height.%]="(month.count / (analytics.totalStringingsAsStringer || 1)) * 100 * 3">
+              </div>
+            </div>
+            <div class="month-label">{{ month.month }}</div>
+            <div class="month-count">{{ month.count }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="analytics-empty" *ngIf="analytics.totalStringingsAsOwner === 0 && (analytics.totalStringingsAsStringer === null || analytics.totalStringingsAsStringer === 0)">
+      <mat-icon>insights</mat-icon>
+      <p>No stringing data yet. Create some stringings to see your analytics!</p>
+    </div>
+  </div>
+</div>

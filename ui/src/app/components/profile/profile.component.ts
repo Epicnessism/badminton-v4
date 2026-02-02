@@ -1,40 +1,38 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { AnalyticsService } from '../../services/analytics.service';
 import { AuthUser } from '../../models/auth.model';
 import { UpdateUserRequest } from '../../models/user.model';
+import { UserAnalytics } from '../../models/analytics.model';
+import { ProfileInfoComponent } from './profile-info/profile-info.component';
+import { ProfileAnalyticsComponent } from './profile-analytics/profile-analytics.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, ProfileInfoComponent, ProfileAnalyticsComponent],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild(ProfileInfoComponent) profileInfoComponent!: ProfileInfoComponent;
+  
   currentUser: AuthUser | null = null;
-  isEditing = false;
-  isChangingPassword = false;
   isLoading = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
-  editFormData: UpdateUserRequest = {};
-  
-  newPassword = '';
-  confirmPassword = '';
-  showNewPassword = false;
-  showConfirmPassword = false;
+  // Analytics
+  analytics: UserAnalytics | null = null;
+  isLoadingAnalytics = false;
+  analyticsError: string | null = null;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private analyticsService: AnalyticsService,
     private router: Router
   ) {}
 
@@ -44,39 +42,23 @@ export class ProfileComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
+    this.loadAnalytics();
   }
 
-  startEditing(): void {
-    if (!this.currentUser) return;
-    this.isEditing = true;
-    this.editFormData = {
-      givenName: this.currentUser.givenName,
-      familyName: this.currentUser.familyName,
-      email: this.currentUser.email,
-      birthday: this.currentUser.birthday
-    };
-    this.clearMessages();
-  }
-
-  cancelEditing(): void {
-    this.isEditing = false;
-    this.editFormData = {};
-    this.clearMessages();
-  }
-
-  saveProfile(): void {
+  // Profile info handlers
+  onProfileUpdated(updateRequest: UpdateUserRequest): void {
     if (!this.currentUser) return;
     
     this.isLoading = true;
     this.clearMessages();
 
-    this.userService.updateUser(this.currentUser.userId, this.editFormData).subscribe({
+    this.userService.updateUser(this.currentUser.userId, updateRequest).subscribe({
       next: (updatedUser) => {
         this.authService.updateCurrentUser(updatedUser);
         this.currentUser = this.authService.getCurrentUser();
-        this.isEditing = false;
         this.isLoading = false;
         this.successMessage = 'Profile updated successfully!';
+        this.profileInfoComponent?.onProfileSaved();
       },
       error: (error) => {
         console.error('Failed to update profile:', error);
@@ -86,45 +68,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  startChangingPassword(): void {
-    this.isChangingPassword = true;
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.showNewPassword = false;
-    this.showConfirmPassword = false;
-    this.clearMessages();
-  }
-
-  cancelChangingPassword(): void {
-    this.isChangingPassword = false;
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.clearMessages();
-  }
-
-  savePassword(): void {
+  onPasswordUpdated(newPassword: string): void {
     if (!this.currentUser) return;
-    
-    if (this.newPassword !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
-    if (this.newPassword.length < 6) {
-      this.errorMessage = 'Password must be at least 6 characters.';
-      return;
-    }
 
     this.isLoading = true;
     this.clearMessages();
 
-    this.userService.updateUser(this.currentUser.userId, { password: this.newPassword }).subscribe({
+    this.userService.updateUser(this.currentUser.userId, { password: newPassword }).subscribe({
       next: () => {
-        this.isChangingPassword = false;
-        this.newPassword = '';
-        this.confirmPassword = '';
         this.isLoading = false;
         this.successMessage = 'Password updated successfully!';
+        this.profileInfoComponent?.onPasswordSaved();
       },
       error: (error) => {
         console.error('Failed to update password:', error);
@@ -134,22 +88,47 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  toggleShowNewPassword(): void {
-    this.showNewPassword = !this.showNewPassword;
-  }
-
-  toggleShowConfirmPassword(): void {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
-
-  private clearMessages(): void {
+  clearMessages(): void {
     this.errorMessage = null;
     this.successMessage = null;
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+  // Analytics handlers
+  loadAnalytics(forceRefresh: boolean = false): void {
+    if (!this.currentUser) return;
+    
+    this.isLoadingAnalytics = true;
+    this.analyticsError = null;
+
+    this.analyticsService.getAnalytics(this.currentUser.userId, forceRefresh).subscribe({
+      next: (analytics) => {
+        this.analytics = analytics;
+        this.isLoadingAnalytics = false;
+      },
+      error: (error) => {
+        console.error('Failed to load analytics:', error);
+        this.analyticsError = 'Failed to load analytics data.';
+        this.isLoadingAnalytics = false;
+      }
+    });
+  }
+
+  refreshAnalytics(): void {
+    if (!this.currentUser) return;
+    
+    this.isLoadingAnalytics = true;
+    this.analyticsError = null;
+
+    this.analyticsService.refreshAnalytics(this.currentUser.userId).subscribe({
+      next: (analytics) => {
+        this.analytics = analytics;
+        this.isLoadingAnalytics = false;
+      },
+      error: (error) => {
+        console.error('Failed to refresh analytics:', error);
+        this.analyticsError = 'Failed to refresh analytics data.';
+        this.isLoadingAnalytics = false;
+      }
+    });
   }
 }
