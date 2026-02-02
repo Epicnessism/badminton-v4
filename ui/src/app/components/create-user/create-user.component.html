@@ -12,8 +12,7 @@
           id="givenName"
           [(ngModel)]="formData.givenName"
           name="givenName"
-          placeholder="John"
-          [class.invalid]="submitted && !formData.givenName"
+                    [class.invalid]="submitted && !formData.givenName"
         />
         <div class="error-message" *ngIf="submitted && !formData.givenName">
           First name is required
@@ -27,8 +26,7 @@
           id="familyName"
           [(ngModel)]="formData.familyName"
           name="familyName"
-          placeholder="Doe"
-          [class.invalid]="submitted && !formData.familyName"
+                    [class.invalid]="submitted && !formData.familyName"
         />
         <div class="error-message" *ngIf="submitted && !formData.familyName">
           Last name is required
@@ -43,8 +41,7 @@
         id="email"
         [(ngModel)]="formData.email"
         name="email"
-        placeholder="john.doe@example.com"
-        [class.invalid]="submitted && (!formData.email || !isValidEmail(formData.email))"
+                [class.invalid]="submitted && (!formData.email || !isValidEmail(formData.email))"
       />
       <div class="error-message" *ngIf="submitted && !formData.email">
         Email is required
@@ -61,8 +58,7 @@
         id="username"
         [(ngModel)]="formData.username"
         name="username"
-        placeholder="johndoe123"
-        [class.invalid]="submitted && !formData.username"
+                [class.invalid]="submitted && !formData.username"
       />
       <div class="error-message" *ngIf="submitted && !formData.username">
         Username is required
@@ -90,8 +86,7 @@
         id="password"
         [(ngModel)]="formData.password"
         name="password"
-        placeholder="••••••••"
-        [class.invalid]="submitted && !formData.password"
+                [class.invalid]="submitted && !formData.password"
       />
       <div class="error-message" *ngIf="submitted && !formData.password">
         Password is required

@@ -29,8 +29,7 @@
         id="loginUsername"
         [(ngModel)]="loginData.username"
         name="username"
-        placeholder="Enter your username"
-        [class.invalid]="submitted && !loginData.username"
+                [class.invalid]="submitted && !loginData.username"
       />
       <div class="error-message" *ngIf="submitted && !loginData.username">
         Username is required
@@ -44,8 +43,7 @@
         id="loginPassword"
         [(ngModel)]="loginData.password"
         name="password"
-        placeholder="Enter your password"
-        [class.invalid]="submitted && !loginData.password"
+                [class.invalid]="submitted && !loginData.password"
       />
       <div class="error-message" *ngIf="submitted && !loginData.password">
         Password is required
@@ -68,8 +66,7 @@
           id="givenName"
           [(ngModel)]="registerData.givenName"
           name="givenName"
-          placeholder="John"
-          [class.invalid]="submitted && !registerData.givenName"
+                    [class.invalid]="submitted && !registerData.givenName"
         />
         <div class="error-message" *ngIf="submitted && !registerData.givenName">
           First name is required
@@ -83,8 +80,7 @@
           id="familyName"
           [(ngModel)]="registerData.familyName"
           name="familyName"
-          placeholder="Doe"
-          [class.invalid]="submitted && !registerData.familyName"
+                    [class.invalid]="submitted && !registerData.familyName"
         />
         <div class="error-message" *ngIf="submitted && !registerData.familyName">
           Last name is required
@@ -99,8 +95,7 @@
         id="email"
         [(ngModel)]="registerData.email"
         name="email"
-        placeholder="john.doe@example.com"
-        [class.invalid]="submitted && (!registerData.email || !isValidEmail(registerData.email))"
+                [class.invalid]="submitted && (!registerData.email || !isValidEmail(registerData.email))"
       />
       <div class="error-message" *ngIf="submitted && !registerData.email">
         Email is required
@@ -117,8 +112,7 @@
         id="username"
         [(ngModel)]="registerData.username"
         name="username"
-        placeholder="johndoe123"
-        [class.invalid]="submitted && !registerData.username"
+                [class.invalid]="submitted && !registerData.username"
       />
       <div class="error-message" *ngIf="submitted && !registerData.username">
         Username is required
@@ -146,8 +140,7 @@
         id="password"
         [(ngModel)]="registerData.password"
         name="password"
-        placeholder="••••••••"
-        [class.invalid]="submitted && !registerData.password"
+                [class.invalid]="submitted && !registerData.password"
       />
       <div class="error-message" *ngIf="submitted && !registerData.password">
         Password is required

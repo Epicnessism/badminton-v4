@@ -120,7 +120,13 @@ public class StringingService {
 
     public List<Stringing> getStringingsByOwnerUserId(UUID ownerUserId) {
         log.info("Getting stringings for owner: {}", ownerUserId);
-        return stringingRepository.getStringingsByOwnerUserId(ownerUserId);
+        // Owner index items are sparse (only contain stringingId for GSI lookups)
+        // We need to fetch full details for each stringing
+        List<Stringing> sparseItems = stringingRepository.getStringingsByOwnerUserId(ownerUserId);
+        return sparseItems.stream()
+                .map(sparse -> stringingRepository.getStringing(sparse.getStringingId()))
+                .filter(stringing -> stringing != null)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -233,6 +239,7 @@ public class StringingService {
     private void updateStateTimestamp(Stringing stringing, StringingState newState, Instant timestamp) {
         switch (newState) {
             case REQUESTED_BUT_NOT_DELIVERED -> stringing.setRequestedAt(timestamp);
+            case DECLINED -> stringing.setDeclinedAt(timestamp);
             case RECEIVED_BUT_NOT_STARTED -> stringing.setReceivedAt(timestamp);
             case IN_PROGRESS -> stringing.setInProgressAt(timestamp);
             case FINISHED_BUT_NOT_PICKED_UP -> stringing.setFinishedAt(timestamp);

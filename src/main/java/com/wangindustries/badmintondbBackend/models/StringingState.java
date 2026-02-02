@@ -9,20 +9,21 @@ import java.util.Set;
  * <p><b>State Transition Diagram:</b></p>
  * <pre>
  * REQUESTED_BUT_NOT_DELIVERED
- *           ↓
- * RECEIVED_BUT_NOT_STARTED
- *           ↓
- *      IN_PROGRESS
  *         ↙   ↘
- * FINISHED_BUT_NOT_PICKED_UP    FAILED_BUT_NOT_PICKED_UP
- *           ↓                              ↓
- *      COMPLETED                    FAILED_COMPLETED
+ *    DECLINED   RECEIVED_BUT_NOT_STARTED
+ *                        ↓
+ *                   IN_PROGRESS
+ *                      ↙   ↘
+ *      FINISHED_BUT_NOT_PICKED_UP    FAILED_BUT_NOT_PICKED_UP
+ *                ↓                              ↓
+ *           COMPLETED                    FAILED_COMPLETED
  * </pre>
  *
- * <p>Once a stringing reaches COMPLETED or FAILED_COMPLETED, no further state changes are allowed.</p>
+ * <p>Once a stringing reaches COMPLETED, FAILED_COMPLETED, or DECLINED, no further state changes are allowed.</p>
  */
 public enum StringingState {
     REQUESTED_BUT_NOT_DELIVERED,
+    DECLINED,
     RECEIVED_BUT_NOT_STARTED,
     IN_PROGRESS,
     FINISHED_BUT_NOT_PICKED_UP,
@@ -30,10 +31,11 @@ public enum StringingState {
     COMPLETED,
     FAILED_COMPLETED;
 
-    private static final Set<StringingState> FINAL_STATES = Set.of(COMPLETED, FAILED_COMPLETED);
+    private static final Set<StringingState> FINAL_STATES = Set.of(COMPLETED, FAILED_COMPLETED, DECLINED);
 
     private static final Map<StringingState, Set<StringingState>> VALID_TRANSITIONS = Map.of(
-            REQUESTED_BUT_NOT_DELIVERED, Set.of(RECEIVED_BUT_NOT_STARTED),
+            REQUESTED_BUT_NOT_DELIVERED, Set.of(RECEIVED_BUT_NOT_STARTED, DECLINED),
+            DECLINED, Set.of(),
             RECEIVED_BUT_NOT_STARTED, Set.of(IN_PROGRESS),
             IN_PROGRESS, Set.of(FINISHED_BUT_NOT_PICKED_UP, FAILED_BUT_NOT_PICKED_UP),
             FINISHED_BUT_NOT_PICKED_UP, Set.of(COMPLETED),

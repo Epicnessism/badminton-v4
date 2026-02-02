@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateStringingRequest, Stringing } from '../models/stringing.model';
+import { CreateStringingRequest, Stringing, UpdateStringingRequest } from '../models/stringing.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
@@ -38,6 +38,12 @@ export class StringingService {
 
   createStringing(request: CreateStringingRequest): Observable<Stringing> {
     return this.http.post<Stringing>(this.apiUrl, request, {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateStringing(stringingId: string, request: UpdateStringingRequest): Observable<Stringing> {
+    return this.http.put<Stringing>(`${this.apiUrl}/${stringingId}`, request, {
       headers: this.getHeaders()
     });
   }

@@ -12,6 +12,7 @@ export interface Stringing {
   state: StringingState;
   createdAt: string;
   requestedAt: string;
+  declinedAt: string | null;
   receivedAt: string | null;
   inProgressAt: string | null;
   finishedAt: string | null;
@@ -31,8 +32,13 @@ export interface CreateStringingRequest {
   crossesTensionLbs: number | null;
 }
 
+export interface UpdateStringingRequest {
+  state?: StringingState;
+}
+
 export type StringingState =
   | 'REQUESTED_BUT_NOT_DELIVERED'
+  | 'DECLINED'
   | 'RECEIVED_BUT_NOT_STARTED'
   | 'IN_PROGRESS'
   | 'FINISHED_BUT_NOT_PICKED_UP'

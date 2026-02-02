@@ -13,10 +13,10 @@ import { AuthUser } from './models/auth.model';
   imports: [CommonModule, RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule],
   template: `
     <mat-toolbar color="primary" class="app-toolbar">
-      <span class="app-title">BadmintonTracker</span>
+      <span class="app-title" (click)="goHome()">BadmintonTracker</span>
       <span class="toolbar-spacer"></span>
       <ng-container *ngIf="isLoggedIn()">
-        <button mat-button (click)="goToCreateStringing()">Create Stringing</button>
+        <button mat-raised-button color="accent" (click)="goToCreateStringing()">Create Stringing</button>
         <span class="toolbar-user">{{ currentUser?.givenName }} {{ currentUser?.familyName }}</span>
         <button mat-icon-button (click)="logout()" aria-label="Logout">
           <mat-icon>logout</mat-icon>
@@ -38,12 +38,17 @@ import { AuthUser } from './models/auth.model';
     .app-title {
       font-weight: 600;
       font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .app-title:hover {
+      opacity: 0.8;
     }
     .toolbar-spacer {
       flex: 1 1 auto;
     }
     .toolbar-user {
-      margin: 0 0.5rem;
+      margin-left: 1rem;
+      margin-right: 0.5rem;
       font-weight: 500;
     }
     .main-content {
@@ -66,6 +71,10 @@ export class AppComponent {
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/home']);
   }
 
   goToCreateStringing(): void {

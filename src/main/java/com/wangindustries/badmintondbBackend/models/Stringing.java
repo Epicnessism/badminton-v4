@@ -38,6 +38,7 @@ public class Stringing {
     private Instant completedAt;
     private Instant failedAt;
     private Instant failedCompletedAt;
+    private Instant declinedAt;
 
     @DynamoDbPartitionKey
     public String getPK() {
@@ -225,6 +226,14 @@ public class Stringing {
 
     public void setFailedCompletedAt(Instant failedCompletedAt) {
         this.failedCompletedAt = failedCompletedAt;
+    }
+
+    public Instant getDeclinedAt() {
+        return declinedAt;
+    }
+
+    public void setDeclinedAt(Instant declinedAt) {
+        this.declinedAt = declinedAt;
     }
 
     public static String createPk(final UUID stringingId) {

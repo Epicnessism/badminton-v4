@@ -76,8 +76,7 @@
           id="racketMake"
           name="racketMake"
           [(ngModel)]="formData.racketMake"
-          placeholder="Yonex"
-          [class.invalid]="submitted && !formData.racketMake"
+                    [class.invalid]="submitted && !formData.racketMake"
         />
         <div class="error-message" *ngIf="submitted && !formData.racketMake">
           Racket make is required
@@ -91,8 +90,7 @@
           id="racketModel"
           name="racketModel"
           [(ngModel)]="formData.racketModel"
-          placeholder="Astrox 88D"
-          [class.invalid]="submitted && !formData.racketModel"
+                    [class.invalid]="submitted && !formData.racketModel"
         />
         <div class="error-message" *ngIf="submitted && !formData.racketModel">
           Racket model is required
@@ -107,8 +105,7 @@
         id="stringType"
         name="stringType"
         [(ngModel)]="formData.stringType"
-        placeholder="BG80"
-      />
+              />
     </div>
 
     <div class="form-group">
@@ -118,8 +115,7 @@
         id="stringColor"
         name="stringColor"
         [(ngModel)]="formData.stringColor"
-        placeholder="Optional (e.g. White)"
-      />
+              />
     </div>
 
     <div class="form-row">
