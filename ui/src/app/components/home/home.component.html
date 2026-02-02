@@ -1,17 +1,26 @@
 <div class="page-container">
   <div class="card">
     <div class="home-header">
-      <div>
-        <h1>Your stringing jobs</h1>
-        <p class="subtitle">Welcome back!</p>
-      </div>
-      <mat-form-field appearance="outline" class="sort-select" *ngIf="stringings.length > 0">
+      <mat-form-field appearance="outline" class="sort-select" *ngIf="allStringings.length > 0">
         <mat-label>Sort by</mat-label>
         <mat-select [(ngModel)]="sortBy" (selectionChange)="onSortChange()">
           <mat-option value="date">Most Recent</mat-option>
           <mat-option value="status">Status</mat-option>
         </mat-select>
       </mat-form-field>
+    </div>
+
+    <div class="filter-chips" *ngIf="sortBy === 'status' && allStringings.length > 0">
+      <mat-chip-listbox multiple aria-label="Filter by status">
+        <mat-chip-option
+          *ngFor="let state of allStates"
+          [selected]="isStateSelected(state)"
+          (click)="toggleStateFilter(state)"
+          [ngClass]="getStateClass(state)"
+        >
+          {{ getStateDisplayName(state) }}
+        </mat-chip-option>
+      </mat-chip-listbox>
     </div>
 
     <div class="loading-container" *ngIf="isLoading">
@@ -23,40 +32,124 @@
       {{ errorMessage }}
     </div>
 
-    <div class="empty-state" *ngIf="!isLoading && !errorMessage && stringings.length === 0">
+    <div class="empty-state" *ngIf="!isLoading && !errorMessage && allStringings.length === 0">
       <h3>No Stringings Yet</h3>
       <p>You don't have any stringing jobs associated with your account yet.</p>
     </div>
 
+    <div class="empty-state" *ngIf="!isLoading && !errorMessage && allStringings.length > 0 && stringings.length === 0">
+      <h3>No Matching Stringings</h3>
+      <p>No stringings match your current filter.</p>
+    </div>
+
     <div class="stringing-list" *ngIf="!isLoading && stringings.length > 0">
-      <div class="stringing-card" *ngFor="let stringing of stringings">
-        <div class="stringing-header">
-          <div class="racket-info">
-            <strong>{{ stringing.racketMake }} {{ stringing.racketModel }}</strong>
-            <span class="owner-name">{{ stringing.ownerName }}</span>
+      <div class="stringing-card" *ngFor="let stringing of stringings" [class.editing]="editingStringing?.stringingId === stringing.stringingId">
+        
+        <ng-container *ngIf="editingStringing?.stringingId !== stringing.stringingId">
+          <div class="stringing-header">
+            <div class="racket-info">
+              <strong>{{ stringing.racketMake }} {{ stringing.racketModel }}</strong>
+              <span class="owner-name">{{ stringing.ownerName }}</span>
+            </div>
+            <div class="stringing-header-actions">
+              <button mat-icon-button 
+                *ngIf="isOwner(stringing)" 
+                [disabled]="!canEdit(stringing)"
+                (click)="startEditing(stringing)"
+                [class.disabled-icon]="!canEdit(stringing)"
+                matTooltip="Edit stringing">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                *ngIf="isOwner(stringing)" 
+                [disabled]="!canCancel(stringing)"
+                (click)="cancelStringing(stringing)"
+                [class.disabled-icon]="!canCancel(stringing)"
+                color="warn"
+                matTooltip="Cancel stringing">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <span class="state-badge" [ngClass]="getStateClass(stringing.state)">
+                {{ getStateDisplayName(stringing.state) }}
+              </span>
+            </div>
           </div>
-          <span class="state-badge" [ngClass]="getStateClass(stringing.state)">
-            {{ getStateDisplayName(stringing.state) }}
-          </span>
-        </div>
-        <div class="stringing-details">
-          <div class="detail">
-            <span class="label">String:</span>
-            <span class="value">{{ stringing.stringType }}</span>
+          <div class="stringing-details">
+            <div class="detail">
+              <span class="label">String:</span>
+              <span class="value">{{ stringing.stringType }}</span>
+            </div>
+            <div class="detail">
+              <span class="label">Tension:</span>
+              <span class="value">{{ stringing.mainsTensionLbs }} / {{ stringing.crossesTensionLbs }} lbs</span>
+            </div>
+            <div class="detail">
+              <span class="label">Requested:</span>
+              <span class="value">{{ stringing.requestedAt | date:'short' }}</span>
+            </div>
           </div>
-          <div class="detail">
-            <span class="label">Tension:</span>
-            <span class="value">{{ stringing.mainsTensionLbs }} / {{ stringing.crossesTensionLbs }} lbs</span>
+          
+          <div class="stringing-actions" *ngIf="canAcceptOrDecline(stringing)">
+            <button mat-raised-button color="primary" (click)="acceptStringing(stringing)">Accept</button>
+            <button mat-raised-button color="warn" (click)="declineStringing(stringing)">Decline</button>
           </div>
-          <div class="detail">
-            <span class="label">Requested:</span>
-            <span class="value">{{ stringing.requestedAt | date:'short' }}</span>
+          
+          <div class="stringing-actions" *ngIf="!canAcceptOrDecline(stringing) && getNextStates(stringing).length > 0">
+            <button mat-raised-button color="primary" 
+              *ngFor="let nextState of getNextStates(stringing)"
+              (click)="proceedToState(stringing, nextState)">
+              {{ getNextStateButtonLabel(nextState) }}
+            </button>
           </div>
-        </div>
-        <div class="stringing-actions" *ngIf="canAcceptOrDecline(stringing)">
-          <button mat-raised-button color="primary" (click)="acceptStringing(stringing)">Accept</button>
-          <button mat-raised-button color="warn" (click)="declineStringing(stringing)">Decline</button>
-        </div>
+        </ng-container>
+
+        <ng-container *ngIf="editingStringing?.stringingId === stringing.stringingId">
+          <div class="edit-form">
+            <h3>Edit Stringing</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Racket Make</mat-label>
+                <input matInput [(ngModel)]="editFormData.racketMake">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Racket Model</mat-label>
+                <input matInput [(ngModel)]="editFormData.racketModel">
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>String Type</mat-label>
+                <input matInput [(ngModel)]="editFormData.stringType">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>String Color</mat-label>
+                <input matInput [(ngModel)]="editFormData.stringColor">
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Mains Tension (lbs)</mat-label>
+                <input matInput type="number" [(ngModel)]="editFormData.mainsTensionLbs">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Crosses Tension (lbs)</mat-label>
+                <input matInput type="number" [(ngModel)]="editFormData.crossesTensionLbs">
+              </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Stringer</mat-label>
+              <mat-select [(ngModel)]="editFormData.stringerUserId">
+                <mat-option *ngFor="let stringer of stringers" [value]="stringer.userId">
+                  {{ stringer.givenName }} {{ stringer.familyName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="edit-actions">
+              <button mat-raised-button color="primary" (click)="saveEditing()">Save</button>
+              <button mat-stroked-button (click)="cancelEditing()">Cancel</button>
+            </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </div>

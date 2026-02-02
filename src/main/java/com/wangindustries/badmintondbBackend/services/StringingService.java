@@ -239,6 +239,7 @@ public class StringingService {
     private void updateStateTimestamp(Stringing stringing, StringingState newState, Instant timestamp) {
         switch (newState) {
             case REQUESTED_BUT_NOT_DELIVERED -> stringing.setRequestedAt(timestamp);
+            case CANCELED -> stringing.setCanceledAt(timestamp);
             case DECLINED -> stringing.setDeclinedAt(timestamp);
             case RECEIVED_BUT_NOT_STARTED -> stringing.setReceivedAt(timestamp);
             case IN_PROGRESS -> stringing.setInProgressAt(timestamp);
