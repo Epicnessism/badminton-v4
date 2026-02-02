@@ -3,6 +3,8 @@ package com.wangindustries.badmintondbBackend.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -13,4 +15,7 @@ public class LoginResponse {
     private String username;
     private String givenName;
     private String familyName;
+    private String email;
+    private LocalDate birthday;
+    private Instant createdAt;
 }

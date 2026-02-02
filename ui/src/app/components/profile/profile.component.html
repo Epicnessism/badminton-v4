@@ -1,0 +1,124 @@
+<div class="page-container">
+  <div class="card">
+    <div class="profile-header">
+      <h1>Profile</h1>
+      <button mat-icon-button *ngIf="!isEditing && !isChangingPassword" (click)="startEditing()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+
+    <div class="success-message" *ngIf="successMessage">
+      ✅ {{ successMessage }}
+    </div>
+
+    <div class="error-card" *ngIf="errorMessage">
+      ❌ {{ errorMessage }}
+    </div>
+
+    <!-- Read-only View -->
+    <div class="profile-info" *ngIf="!isEditing && currentUser">
+      <div class="info-row">
+        <span class="info-label">First Name</span>
+        <span class="info-value">{{ currentUser.givenName }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Last Name</span>
+        <span class="info-value">{{ currentUser.familyName }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ currentUser.email }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Username</span>
+        <span class="info-value">{{ currentUser.username }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Birthday</span>
+        <span class="info-value">{{ formatDate(currentUser.birthday) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Member Since</span>
+        <span class="info-value">{{ formatDate(currentUser.createdAt) }}</span>
+      </div>
+
+      <div class="password-section" *ngIf="!isChangingPassword">
+        <button mat-stroked-button color="primary" (click)="startChangingPassword()">
+          Change Password
+        </button>
+      </div>
+
+      <!-- Change Password Form -->
+      <div class="password-form" *ngIf="isChangingPassword">
+        <h3>Change Password</h3>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>New Password</mat-label>
+            <input matInput 
+              [type]="showNewPassword ? 'text' : 'password'" 
+              [(ngModel)]="newPassword">
+            <button mat-icon-button matSuffix type="button" (click)="toggleShowNewPassword()">
+              <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm New Password</mat-label>
+            <input matInput 
+              [type]="showConfirmPassword ? 'text' : 'password'" 
+              [(ngModel)]="confirmPassword">
+            <button mat-icon-button matSuffix type="button" (click)="toggleShowConfirmPassword()">
+              <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div class="password-match-error" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
+          Passwords do not match
+        </div>
+        <div class="form-actions">
+          <button mat-raised-button color="primary" 
+            [disabled]="isLoading || !newPassword || !confirmPassword || newPassword !== confirmPassword"
+            (click)="savePassword()">
+            {{ isLoading ? 'Saving...' : 'Save Password' }}
+          </button>
+          <button mat-stroked-button (click)="cancelChangingPassword()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="profile-edit" *ngIf="isEditing">
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>First Name</mat-label>
+          <input matInput [(ngModel)]="editFormData.givenName">
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Last Name</mat-label>
+          <input matInput [(ngModel)]="editFormData.familyName">
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="editFormData.email">
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Birthday</mat-label>
+          <input matInput type="date" [(ngModel)]="editFormData.birthday">
+        </mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" [disabled]="isLoading" (click)="saveProfile()">
+          {{ isLoading ? 'Saving...' : 'Save Changes' }}
+        </button>
+        <button mat-stroked-button (click)="cancelEditing()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

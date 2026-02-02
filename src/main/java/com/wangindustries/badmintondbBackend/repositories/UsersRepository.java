@@ -33,7 +33,10 @@ public class UsersRepository {
     }
 
     public User getUser(final UUID userId) {
-        return userTable.getItem(Key.builder().partitionValue(User.createPk(userId)).build());
+        return userTable.getItem(Key.builder()
+                .partitionValue(User.createPk(userId))
+                .sortValue(User.createSk())
+                .build());
     }
 
     public User findByUsername(final String username) {

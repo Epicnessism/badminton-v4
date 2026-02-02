@@ -46,7 +46,7 @@
       <div class="stringing-card" *ngFor="let stringing of stringings" [class.editing]="editingStringing?.stringingId === stringing.stringingId">
         
         <ng-container *ngIf="editingStringing?.stringingId !== stringing.stringingId">
-          <div class="stringing-header">
+          <div class="stringing-header" (click)="toggleExpanded(stringing.stringingId)">
             <div class="racket-info">
               <strong>{{ stringing.racketMake }} {{ stringing.racketModel }}</strong>
               <span class="owner-name">{{ stringing.ownerName }}</span>
@@ -55,7 +55,7 @@
               <button mat-icon-button 
                 *ngIf="isOwner(stringing)" 
                 [disabled]="!canEdit(stringing)"
-                (click)="startEditing(stringing)"
+                (click)="startEditing(stringing); $event.stopPropagation()"
                 [class.disabled-icon]="!canEdit(stringing)"
                 matTooltip="Edit stringing">
                 <mat-icon>edit</mat-icon>
@@ -63,7 +63,7 @@
               <button mat-icon-button 
                 *ngIf="isOwner(stringing)" 
                 [disabled]="!canCancel(stringing)"
-                (click)="cancelStringing(stringing)"
+                (click)="cancelStringing(stringing); $event.stopPropagation()"
                 [class.disabled-icon]="!canCancel(stringing)"
                 color="warn"
                 matTooltip="Cancel stringing">
@@ -72,6 +72,7 @@
               <span class="state-badge" [ngClass]="getStateClass(stringing.state)">
                 {{ getStateDisplayName(stringing.state) }}
               </span>
+              <mat-icon class="expand-icon">{{ isExpanded(stringing.stringingId) ? 'expand_less' : 'expand_more' }}</mat-icon>
             </div>
           </div>
           <div class="stringing-details">
@@ -84,20 +85,36 @@
               <span class="value">{{ stringing.mainsTensionLbs }} / {{ stringing.crossesTensionLbs }} lbs</span>
             </div>
             <div class="detail">
+              <span class="label">Stringer:</span>
+              <span class="value">{{ getStringerName(stringing) }}</span>
+            </div>
+            <div class="detail">
               <span class="label">Requested:</span>
               <span class="value">{{ stringing.requestedAt | date:'short' }}</span>
             </div>
           </div>
+
+          <div class="status-history" *ngIf="isExpanded(stringing.stringingId)">
+            <h4>Status History</h4>
+            <div class="history-timeline">
+              <div class="history-item" *ngFor="let item of getStatusHistory(stringing)">
+                <span class="history-state" [ngClass]="getStateClass(item.state)">
+                  {{ getStateDisplayName(item.state) }}
+                </span>
+                <span class="history-timestamp">{{ item.timestamp | date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
           
           <div class="stringing-actions" *ngIf="canAcceptOrDecline(stringing)">
-            <button mat-raised-button color="primary" (click)="acceptStringing(stringing)">Accept</button>
-            <button mat-raised-button color="warn" (click)="declineStringing(stringing)">Decline</button>
+            <button mat-raised-button color="primary" (click)="acceptStringing(stringing); $event.stopPropagation()">Accept</button>
+            <button mat-raised-button color="warn" (click)="declineStringing(stringing); $event.stopPropagation()">Decline</button>
           </div>
           
           <div class="stringing-actions" *ngIf="!canAcceptOrDecline(stringing) && getNextStates(stringing).length > 0">
             <button mat-raised-button color="primary" 
               *ngFor="let nextState of getNextStates(stringing)"
-              (click)="proceedToState(stringing, nextState)">
+              (click)="proceedToState(stringing, nextState); $event.stopPropagation()">
               {{ getNextStateButtonLabel(nextState) }}
             </button>
           </div>

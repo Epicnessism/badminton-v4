@@ -8,6 +8,14 @@ export interface CreateUserRequest {
   isStringer?: boolean;
 }
 
+export interface UpdateUserRequest {
+  givenName?: string;
+  familyName?: string;
+  email?: string;
+  birthday?: string;
+  password?: string;
+}
+
 export interface User {
   userId: string;
   givenName: string;

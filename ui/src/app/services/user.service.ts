@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateUserRequest, User } from '../models/user.model';
+import { CreateUserRequest, UpdateUserRequest, User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
@@ -43,6 +43,12 @@ export class UserService {
 
   getStringers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/stringers`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateUser(userId: string, request: UpdateUserRequest): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${userId}`, request, {
       headers: this.getHeaders()
     });
   }

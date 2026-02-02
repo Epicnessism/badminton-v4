@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { LoginRequest } from '../../models/auth.model';
@@ -11,7 +13,7 @@ import { CreateUserRequest } from '../../models/user.model';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCheckboxModule],
+  imports: [CommonModule, FormsModule, MatCheckboxModule, MatIconModule, MatButtonModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -35,6 +37,9 @@ export class LoginComponent {
   errorMessage: string | null = null;
   isLoading = false;
   submitted = false;
+  
+  showLoginPassword = false;
+  showRegisterPassword = false;
 
   constructor(
     private authService: AuthService,
@@ -121,5 +126,13 @@ export class LoginComponent {
   isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+
+  toggleLoginPassword(): void {
+    this.showLoginPassword = !this.showLoginPassword;
+  }
+
+  toggleRegisterPassword(): void {
+    this.showRegisterPassword = !this.showRegisterPassword;
   }
 }

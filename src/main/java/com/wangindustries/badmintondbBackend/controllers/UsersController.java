@@ -2,6 +2,7 @@ package com.wangindustries.badmintondbBackend.controllers;
 
 import com.wangindustries.badmintondbBackend.models.User;
 import com.wangindustries.badmintondbBackend.requests.CreateUserRequest;
+import com.wangindustries.badmintondbBackend.requests.UpdateUserRequest;
 import com.wangindustries.badmintondbBackend.responses.GetUserResponse;
 import jakarta.validation.Valid;
 import com.wangindustries.badmintondbBackend.services.UsersService;
@@ -49,6 +50,24 @@ public class UsersController {
         } catch (Exception e) {
             log.error("Failed to create user", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //todo should either log and handle or throw, not both
+        }
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpdateUserRequest updateUserRequest
+    ) {
+        log.info("Received update user request for userId {}: {}", userId, updateUserRequest);
+        try {
+            User updatedUser = usersService.updateUser(userId, updateUserRequest);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error("User not found: {}", userId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Failed to update user", e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 //    @PutMapping("/user/{userId}")

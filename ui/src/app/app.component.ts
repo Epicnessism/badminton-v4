@@ -17,7 +17,7 @@ import { AuthUser } from './models/auth.model';
       <span class="toolbar-spacer"></span>
       <ng-container *ngIf="isLoggedIn()">
         <button mat-raised-button color="accent" (click)="goToCreateStringing()">Create Stringing</button>
-        <span class="toolbar-user">{{ currentUser?.givenName }} {{ currentUser?.familyName }}</span>
+        <span class="toolbar-user" (click)="goToProfile()">{{ currentUser?.givenName }} {{ currentUser?.familyName }}</span>
         <button mat-icon-button (click)="logout()" aria-label="Logout">
           <mat-icon>logout</mat-icon>
         </button>
@@ -50,6 +50,10 @@ import { AuthUser } from './models/auth.model';
       margin-left: 1rem;
       margin-right: 0.5rem;
       font-weight: 500;
+      cursor: pointer;
+    }
+    .toolbar-user:hover {
+      text-decoration: underline;
     }
     .main-content {
       padding-top: 64px;
@@ -79,6 +83,10 @@ export class AppComponent {
 
   goToCreateStringing(): void {
     this.router.navigate(['/stringing/new']);
+  }
+
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
   logout(): void {

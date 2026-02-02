@@ -38,13 +38,18 @@
 
     <div class="form-group">
       <label for="loginPassword">Password</label>
-      <input
-        type="password"
-        id="loginPassword"
-        [(ngModel)]="loginData.password"
-        name="password"
-                [class.invalid]="submitted && !loginData.password"
-      />
+      <div class="password-input-wrapper">
+        <input
+          [type]="showLoginPassword ? 'text' : 'password'"
+          id="loginPassword"
+          [(ngModel)]="loginData.password"
+          name="password"
+          [class.invalid]="submitted && !loginData.password"
+        />
+        <button type="button" class="password-toggle" (click)="toggleLoginPassword()">
+          <mat-icon>{{ showLoginPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </div>
       <div class="error-message" *ngIf="submitted && !loginData.password">
         Password is required
       </div>
@@ -135,13 +140,18 @@
 
     <div class="form-group">
       <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        [(ngModel)]="registerData.password"
-        name="password"
-                [class.invalid]="submitted && !registerData.password"
-      />
+      <div class="password-input-wrapper">
+        <input
+          [type]="showRegisterPassword ? 'text' : 'password'"
+          id="password"
+          [(ngModel)]="registerData.password"
+          name="password"
+          [class.invalid]="submitted && !registerData.password"
+        />
+        <button type="button" class="password-toggle" (click)="toggleRegisterPassword()">
+          <mat-icon>{{ showRegisterPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </div>
       <div class="error-message" *ngIf="submitted && !registerData.password">
         Password is required
       </div>

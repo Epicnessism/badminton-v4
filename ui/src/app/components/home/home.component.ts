@@ -37,6 +37,7 @@ export class HomeComponent implements OnInit {
   editingStringing: Stringing | null = null;
   editFormData: UpdateStringingRequest = {};
   stringers: User[] = [];
+  expandedStringings: Set<string> = new Set();
 
   constructor(
     private authService: AuthService,
@@ -289,5 +290,58 @@ export class HomeComponent implements OnInit {
       'FAILED_COMPLETED': 'state-failed'
     };
     return classMap[state] || '';
+  }
+
+  toggleExpanded(stringingId: string): void {
+    if (this.expandedStringings.has(stringingId)) {
+      this.expandedStringings.delete(stringingId);
+    } else {
+      this.expandedStringings.add(stringingId);
+    }
+  }
+
+  isExpanded(stringingId: string): boolean {
+    return this.expandedStringings.has(stringingId);
+  }
+
+  getStringerName(stringing: Stringing): string {
+    const stringer = this.stringers.find(s => s.userId === stringing.stringerUserId);
+    return stringer ? `${stringer.givenName} ${stringer.familyName}` : 'Unknown';
+  }
+
+  getStatusHistory(stringing: Stringing): { state: string; timestamp: string | null }[] {
+    const history: { state: string; timestamp: string | null }[] = [];
+    
+    if (stringing.requestedAt) {
+      history.push({ state: 'REQUESTED_BUT_NOT_DELIVERED', timestamp: stringing.requestedAt });
+    }
+    if (stringing.receivedAt) {
+      history.push({ state: 'RECEIVED_BUT_NOT_STARTED', timestamp: stringing.receivedAt });
+    }
+    if (stringing.inProgressAt) {
+      history.push({ state: 'IN_PROGRESS', timestamp: stringing.inProgressAt });
+    }
+    if (stringing.finishedAt) {
+      history.push({ state: 'FINISHED_BUT_NOT_PICKED_UP', timestamp: stringing.finishedAt });
+    }
+    if (stringing.failedAt) {
+      history.push({ state: 'FAILED_BUT_NOT_PICKED_UP', timestamp: stringing.failedAt });
+    }
+    if (stringing.completedAt) {
+      history.push({ state: 'COMPLETED', timestamp: stringing.completedAt });
+    }
+    if (stringing.failedCompletedAt) {
+      history.push({ state: 'FAILED_COMPLETED', timestamp: stringing.failedCompletedAt });
+    }
+    if (stringing.declinedAt) {
+      history.push({ state: 'DECLINED', timestamp: stringing.declinedAt });
+    }
+    if (stringing.canceledAt) {
+      history.push({ state: 'CANCELED', timestamp: stringing.canceledAt });
+    }
+    
+    return history.sort((a, b) => 
+      new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime()
+    );
   }
 }

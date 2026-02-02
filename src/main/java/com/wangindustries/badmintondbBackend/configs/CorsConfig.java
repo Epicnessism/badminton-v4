@@ -18,7 +18,9 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(
                 "http://localhost:4200",
-                "https://master.d2uty3sw0hn6td.amplifyapp.com"
+                "https://master.d2uty3sw0hn6td.amplifyapp.com",
+                "https://badmintonstatstracker.com",
+                "https://www.badmintonstatstracker.com"
         ));
         config.setAllowedHeaders(Arrays.asList(
                 "Origin",

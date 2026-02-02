@@ -9,6 +9,9 @@ export interface LoginResponse {
   username: string;
   givenName: string;
   familyName: string;
+  email: string;
+  birthday: string;
+  createdAt: string;
 }
 
 export interface AuthUser {
@@ -16,4 +19,7 @@ export interface AuthUser {
   username: string;
   givenName: string;
   familyName: string;
+  email: string;
+  birthday: string;
+  createdAt: string;
 }

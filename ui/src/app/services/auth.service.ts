@@ -25,7 +25,10 @@ export class AuthService {
           userId: response.userId,
           username: response.username,
           givenName: response.givenName,
-          familyName: response.familyName
+          familyName: response.familyName,
+          email: response.email,
+          birthday: response.birthday,
+          createdAt: response.createdAt
         };
         this.storeUser(user);
         this.currentUserSubject.next(user);
@@ -49,6 +52,21 @@ export class AuthService {
 
   getCurrentUser(): AuthUser | null {
     return this.currentUserSubject.value;
+  }
+
+  updateCurrentUser(updatedUser: any): void {
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      const newUser: AuthUser = {
+        ...currentUser,
+        givenName: updatedUser.givenName || currentUser.givenName,
+        familyName: updatedUser.familyName || currentUser.familyName,
+        email: updatedUser.email || currentUser.email,
+        birthday: updatedUser.birthday || currentUser.birthday
+      };
+      this.storeUser(newUser);
+      this.currentUserSubject.next(newUser);
+    }
   }
 
   private storeToken(token: string): void {
