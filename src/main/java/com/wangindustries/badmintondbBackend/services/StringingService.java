@@ -3,6 +3,7 @@ package com.wangindustries.badmintondbBackend.services;
 import com.wangindustries.badmintondbBackend.exceptions.InvalidStateTransitionException;
 import com.wangindustries.badmintondbBackend.models.Stringing;
 import com.wangindustries.badmintondbBackend.models.StringingState;
+import com.wangindustries.badmintondbBackend.models.User;
 import com.wangindustries.badmintondbBackend.repositories.StringingRepository;
 import com.wangindustries.badmintondbBackend.requests.CreateStringingRequest;
 import com.wangindustries.badmintondbBackend.requests.UpdateStringingRequest;
@@ -21,6 +22,9 @@ public class StringingService {
 
     @Autowired
     private StringingRepository stringingRepository;
+
+    @Autowired
+    private UsersService usersService;
 
     /**
      * Creates a new Stringing entity.
@@ -82,6 +86,15 @@ public class StringingService {
         stringing.setState(StringingState.REQUESTED_BUT_NOT_DELIVERED);
         stringing.setCreatedAt(now);
         stringing.setRequestedAt(now);
+
+        // Look up owner name
+        if (request.getOwnerUserId() != null) {
+            User owner = usersService.getUser(request.getOwnerUserId());
+            if (owner != null) {
+                String ownerName = (owner.getGivenName() + " " + owner.getFamilyName()).trim();
+                stringing.setOwnerName(ownerName);
+            }
+        }
 
         if (request.getStringerUserId() != null) {
             stringing.setGsiPk(Stringing.createGsiStringerPk(request.getStringerUserId()));

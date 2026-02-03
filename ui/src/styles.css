@@ -19,7 +19,16 @@ body {
   padding: 1.5rem;
 }
 
+/* Single column centered layout for pages with one section */
 .page-container {
+  max-width: 900px;
+  width: 95%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Two column layout for profile page (profile left, analytics right) */
+.page-container-split {
   max-width: 1400px;
   width: 95%;
   margin: 0 auto;
@@ -31,7 +40,7 @@ body {
 }
 
 @media (max-width: 900px) {
-  .page-container {
+  .page-container-split {
     grid-template-columns: 1fr;
     max-width: 700px;
   }
@@ -1029,4 +1038,55 @@ form button[type="submit"]:disabled {
   .state-bar-wrapper {
     width: 100%;
   }
+}
+
+/* Tension section styles */
+.tension-section {
+  margin-bottom: 1.5rem;
+}
+
+.tension-section > label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.tension-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tension-presets button {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.tension-presets button.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.tension-controls {
+  margin-top: 1rem;
+}
+
+.tension-slider-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.tension-slider-group label {
+  margin-bottom: 0.5rem;
+}
+
+.tension-slider {
+  width: 100%;
+}
+
+.string-color {
+  color: #666;
+  font-style: italic;
 }

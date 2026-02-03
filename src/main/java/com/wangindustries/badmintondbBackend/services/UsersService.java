@@ -25,10 +25,6 @@ public class UsersService {
     @Autowired
     PasswordValidationService passwordValidationService;
 
-    public User findByUserId(UUID userId) {
-        return usersRepository.getUser(userId);
-    }
-
     public User createUser(CreateUserRequest request) {
         log.info("Creating user with request: {}", request);
 
@@ -63,6 +59,10 @@ public class UsersService {
         log.info("Successfully created user: {}", user);
 
         return user;
+    }
+
+    public User getUser(UUID userId) {
+        return usersRepository.getUser(userId);
     }
 
     public User findByUsername(String username) {

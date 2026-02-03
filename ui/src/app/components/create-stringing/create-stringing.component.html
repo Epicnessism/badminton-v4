@@ -18,132 +18,162 @@
   </div>
 
   <form *ngIf="!isLoading" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label>Owner</label>
-      <div class="owner-selection">
-        <button
-          *ngIf="ownerSelectMode === 'ME'"
-          mat-raised-button
-          color="primary"
-          type="button"
-          (click)="enableOwnerSearch()"
-        >
-          {{ getOwnerDisplayName() }} (Me) - Click to change
-        </button>
-
-        <div *ngIf="ownerSelectMode === 'SEARCH'" class="owner-search-container">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Select owner</mat-label>
-            <mat-select
-              [(ngModel)]="formData.ownerUserId"
-              name="ownerUserId"
-              (selectionChange)="onOwnerChanged()"
-            >
-              <mat-option *ngFor="let user of users" [value]="user.userId">
-                {{ user.givenName }} {{ user.familyName }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+    <div class="form-row">
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Owner</mat-label>
+          <input matInput
+            [formControl]="ownerSearchControl"
+            [matAutocomplete]="ownerAuto"
+            (focus)="onOwnerFocus()"
+            (blur)="onOwnerBlur()"
+            [class.invalid]="(submitted && !formData.ownerUserId) || ownerInvalid">
+          <button *ngIf="formData.ownerUserId" matSuffix mat-icon-button type="button" (click)="clearOwner()" matTooltip="Clear selection">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-autocomplete #ownerAuto="matAutocomplete" 
+            (optionSelected)="onOwnerSelected($event.option.value)">
+            <mat-option *ngFor="let user of filteredOwners$ | async" [value]="user">
+              {{ user.givenName }} {{ user.familyName }}{{ user.userId === currentUserId ? ' (me)' : '' }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <div class="error-message" *ngIf="submitted && !formData.ownerUserId">
+          Owner is required
+        </div>
+        <div class="error-message" *ngIf="ownerInvalid">
+          Please select a valid owner from the list
         </div>
       </div>
-      <div class="error-message" *ngIf="submitted && !formData.ownerUserId">
-        Owner is required
-      </div>
-    </div>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Stringer</mat-label>
-        <mat-select
-          [(ngModel)]="formData.stringerUserId"
-          name="stringerUserId"
-        >
-          <mat-option *ngFor="let user of stringers" [value]="user.userId">
-            {{ user.givenName }} {{ user.familyName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="error-message" *ngIf="submitted && !formData.stringerUserId">
-        Stringer is required
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Stringer</mat-label>
+          <input matInput
+            [formControl]="stringerSearchControl"
+            [matAutocomplete]="stringerAuto"
+            (focus)="onStringerFocus()"
+            (blur)="onStringerBlur()"
+            [class.invalid]="(submitted && !formData.stringerUserId) || stringerInvalid">
+          <button *ngIf="formData.stringerUserId" matSuffix mat-icon-button type="button" (click)="clearStringer()" matTooltip="Clear selection">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-autocomplete #stringerAuto="matAutocomplete"
+            (optionSelected)="onStringerSelected($event.option.value)">
+            <mat-option *ngFor="let user of filteredStringers$ | async" [value]="user">
+              {{ user.givenName }} {{ user.familyName }}{{ user.userId === currentUserId ? ' (me)' : '' }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <div class="error-message" *ngIf="submitted && !formData.stringerUserId">
+          Stringer is required
+        </div>
+        <div class="error-message" *ngIf="stringerInvalid">
+          Please select a valid stringer from the list
+        </div>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="racketMake">Racket Make</label>
-        <input
-          type="text"
-          id="racketMake"
-          name="racketMake"
-          [(ngModel)]="formData.racketMake"
-                    [class.invalid]="submitted && !formData.racketMake"
-        />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Racket Make</mat-label>
+          <input matInput 
+            [formControl]="makeControl"
+            [matAutocomplete]="makeAuto"
+            [class.invalid]="submitted && !formData.racketMake"
+            (keydown.enter)="onEnterSelect(makeControl, allMakes, makeControl.value || '')">
+          <mat-autocomplete #makeAuto="matAutocomplete">
+            <mat-option *ngFor="let make of filteredMakes$ | async" [value]="make">
+              {{ make }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
         <div class="error-message" *ngIf="submitted && !formData.racketMake">
           Racket make is required
         </div>
       </div>
 
       <div class="form-group">
-        <label for="racketModel">Racket Model</label>
-        <input
-          type="text"
-          id="racketModel"
-          name="racketModel"
-          [(ngModel)]="formData.racketModel"
-                    [class.invalid]="submitted && !formData.racketModel"
-        />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Racket Model</mat-label>
+          <input matInput 
+            [formControl]="modelControl"
+            [matAutocomplete]="modelAuto"
+            [class.invalid]="submitted && !formData.racketModel"
+            (keydown.enter)="onEnterSelect(modelControl, allModels, modelControl.value || '')">
+          <mat-autocomplete #modelAuto="matAutocomplete">
+            <mat-option *ngFor="let model of filteredModels$ | async" [value]="model">
+              {{ model }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
         <div class="error-message" *ngIf="submitted && !formData.racketModel">
           Racket model is required
         </div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="stringType">String Type</label>
-      <input
-        type="text"
-        id="stringType"
-        name="stringType"
-        [(ngModel)]="formData.stringType"
-              />
-    </div>
-
-    <div class="form-group">
-      <label for="stringColor">String Color</label>
-      <input
-        type="text"
-        id="stringColor"
-        name="stringColor"
-        [(ngModel)]="formData.stringColor"
-              />
-    </div>
-
     <div class="form-row">
       <div class="form-group">
-        <label for="mainsTensionLbs">Mains Tension (lbs)</label>
-        <input
-          type="number"
-          id="mainsTensionLbs"
-          name="mainsTensionLbs"
-          [(ngModel)]="formData.mainsTensionLbs"
-          min="1"
-          [class.invalid]="submitted && (!formData.mainsTensionLbs || formData.mainsTensionLbs <= 0)"
-        />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>String Type</mat-label>
+          <input matInput 
+            [formControl]="stringTypeControl"
+            [matAutocomplete]="stringAuto"
+            (keydown.enter)="onEnterSelect(stringTypeControl, allStringTypes, stringTypeControl.value || '')">
+          <mat-autocomplete #stringAuto="matAutocomplete">
+            <mat-option *ngFor="let stringType of filteredStringTypes$ | async" [value]="stringType">
+              {{ stringType }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>String Color</mat-label>
+          <input matInput 
+            [formControl]="stringColorControl"
+            [matAutocomplete]="colorAuto"
+            (keydown.enter)="onEnterSelect(stringColorControl, allColors, stringColorControl.value || '')">
+          <mat-autocomplete #colorAuto="matAutocomplete">
+            <mat-option *ngFor="let color of filteredColors$ | async" [value]="color">
+              {{ color }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="tension-section">
+      <label>Tension Presets</label>
+      <div class="tension-presets">
+        <button type="button" mat-stroked-button 
+          *ngFor="let preset of tensionPresets; let i = index"
+          (click)="applyTensionPreset(preset, i)"
+          [class.selected]="selectedPresetIndex === i">
+          {{ preset.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-row tension-controls">
+      <div class="form-group tension-slider-group">
+        <label>Mains Tension: <strong>{{ formData.mainsTensionLbs }} lbs</strong></label>
+        <mat-slider [min]="tensionMin" [max]="tensionMax" step="1" discrete class="tension-slider">
+          <input matSliderThumb [(ngModel)]="formData.mainsTensionLbs" name="mainsTensionLbs" (ngModelChange)="onMainsTensionChange()">
+        </mat-slider>
         <div class="error-message" *ngIf="submitted && (!formData.mainsTensionLbs || formData.mainsTensionLbs <= 0)">
           Mains tension must be greater than 0
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="crossesTensionLbs">Crosses Tension (lbs)</label>
-        <input
-          type="number"
-          id="crossesTensionLbs"
-          name="crossesTensionLbs"
-          [(ngModel)]="formData.crossesTensionLbs"
-          min="1"
-          [class.invalid]="submitted && (!formData.crossesTensionLbs || formData.crossesTensionLbs <= 0)"
-        />
+      <div class="form-group tension-slider-group">
+        <label>Crosses Tension: <strong>{{ formData.crossesTensionLbs }} lbs</strong></label>
+        <mat-slider [min]="tensionMin" [max]="tensionMax" step="1" discrete class="tension-slider">
+          <input matSliderThumb [(ngModel)]="formData.crossesTensionLbs" name="crossesTensionLbs" (ngModelChange)="onCrossesTensionChange()">
+        </mat-slider>
         <div class="error-message" *ngIf="submitted && (!formData.crossesTensionLbs || formData.crossesTensionLbs <= 0)">
           Crosses tension must be greater than 0
         </div>

@@ -77,8 +77,12 @@
           </div>
           <div class="stringing-details">
             <div class="detail">
+              <span class="label">Owner:</span>
+              <span class="value">{{ stringing.ownerName }}</span>
+            </div>
+            <div class="detail">
               <span class="label">String:</span>
-              <span class="value">{{ stringing.stringType }}</span>
+              <span class="value">{{ stringing.stringType }}<span *ngIf="stringing.stringColor" class="string-color"> ({{ stringing.stringColor }})</span></span>
             </div>
             <div class="detail">
               <span class="label">Tension:</span>
